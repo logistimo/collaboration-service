@@ -3,8 +3,9 @@
 
 exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom \
     -Dserver.port=$SERVER_PORT \
-    -Dcallisto.url=$CALLISTO_URL \
-    -Dlogistimo.url=$LOGI_URL \
-    -Dmessage.resource=$MSG_RESOURCE \
+    -Dactivemq.broker-url=$ACTIVEMQ_URL \
+    -Dspring.social.db.url=$MYSQL_SOCIAL_HOST \
+    -Dspring.social.db.username=$MYSQL_SOCIAL_USER \
+    -Dspring.social.db.password=$MYSQL_SOCIAL_PASS \
     -javaagent:$HOME/jmx_prometheus_javaagent-0.7.jar=$JAVA_AGENT_PORT:$HOME/jmx_exporter.json \
-    -jar $HOME/event-summarizer.jar
+    -jar $HOME/logistimo-social.jar
