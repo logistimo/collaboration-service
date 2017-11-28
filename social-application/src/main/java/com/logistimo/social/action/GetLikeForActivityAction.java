@@ -2,21 +2,13 @@ package com.logistimo.social.action;
 
 import com.logistimo.social.core.model.GetLikeResponseModel;
 import com.logistimo.social.core.model.LikeModel;
-import com.logistimo.social.core.model.SocialLikerModel;
-import com.logistimo.social.entity.Like;
-import com.logistimo.social.entity.SocialContext;
-import com.logistimo.social.model.PageParam;
-import com.logistimo.social.repository.LikeRepository;
+import com.logistimo.social.core.model.PageParam;
 import com.logistimo.social.repository.LikeRepositoryCustom;
-import com.logistimo.social.repository.SocialContextRepository;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
