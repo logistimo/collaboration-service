@@ -122,7 +122,7 @@ public class LikeRepositoryCustomImpl implements LikeRepositoryCustom {
       m.setObjectType((String)row[1]);
       m.setContextId((String)row[2]);
       m.setCount(((BigInteger)row[3]).intValue());
-      m.setLiked((((BigDecimal)row[4]).intValue()) == 1);
+      m.setLiked(!((((BigDecimal)row[4]).intValue()) == 0));
       list.add(m);
     }
     return list;
