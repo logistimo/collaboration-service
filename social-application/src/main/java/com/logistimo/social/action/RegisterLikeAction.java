@@ -1,11 +1,12 @@
 package com.logistimo.social.action;
 
+import com.google.gson.GsonBuilder;
+
 import com.logistimo.social.core.constants.SocialType;
 import com.logistimo.social.core.event.Event;
 import com.logistimo.social.core.event.LikeRegisteredEvent;
-import com.logistimo.social.core.model.LikeRequestModel;
-import com.logistimo.social.core.model.LikeResponseModel;
-import com.logistimo.social.core.model.SocialLikeModel;
+import com.logistimo.social.core.model.RegisterLikeRequestModel;
+import com.logistimo.social.core.model.RegisterLikeResponseModel;
 import com.logistimo.social.entity.Like;
 import com.logistimo.social.entity.SocialActivity;
 import com.logistimo.social.entity.SocialContext;
@@ -15,7 +16,6 @@ import com.logistimo.social.repository.SocialContextRepository;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -23,9 +23,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
@@ -52,23 +50,25 @@ public class RegisterLikeAction {
   @Resource
   LikeRepository lkRepository;
 
-  @Produce(uri = "jms:event")
+  @Produce(uri = "jms:events")
   ProducerTemplate producer;
 
 
   @Transactional(transactionManager = "scTransactionManager",propagation = Propagation.REQUIRES_NEW)
-  public LikeResponseModel invoke (LikeRequestModel likeRequestModel) {
+  public RegisterLikeResponseModel invoke (RegisterLikeRequestModel likeRequestModel) {
     //validate request data
     validate(likeRequestModel);
-    LikeResponseModel response =  persist(likeRequestModel);
+    RegisterLikeResponseModel response =  persist(likeRequestModel);
     //raise events
-    producer.sendBody(constructEvent(response, likeRequestModel.getUser()));
+    Event e = constructEvent(response, likeRequestModel.getUser());
+    log.info("sending regitered event {}",e);
+    producer.sendBody(getData(e));
     return response;
   }
 
-  private void validate(LikeRequestModel model) {
+  private void validate(RegisterLikeRequestModel model) {
     //validating the request data
-    Set<ConstraintViolation<LikeRequestModel>> violations = validator.validate(model);
+    Set<ConstraintViolation<RegisterLikeRequestModel>> violations = validator.validate(model);
     if (!violations.isEmpty() && violations.size() > 0) {
       StringBuilder errBuilder = new StringBuilder();
       violations.forEach(violation -> errBuilder.append(violation.getMessage()));
@@ -77,12 +77,12 @@ public class RegisterLikeAction {
     }
   }
 
-  private LikeResponseModel persist(LikeRequestModel model) {
+  private RegisterLikeResponseModel persist(RegisterLikeRequestModel model) {
 
     String type = SocialType.getValue(model.getType());
     SocialActivity activity = null;
     //check whether social context exists or not
-    SocialContext scontxt = scRepository.findContextByObjectAndContxt(model.getObjectid(),model.getObjectty(),model.getContextid(),model.getContextty());
+    SocialContext scontxt = scRepository.findContextByObjectAndContxt(model.getObjectId(),model.getObjectType(),model.getContextId(),model.getContextType());
     if (scontxt == null) {
       scontxt = createContext(model);
     } else {
@@ -98,12 +98,13 @@ public class RegisterLikeAction {
     return constructResponse(model,activity);
   }
 
-  private SocialContext createContext (LikeRequestModel model) {
+  private SocialContext createContext (RegisterLikeRequestModel model) {
     SocialContext scontxt = new SocialContext();
-    scontxt.setObjid(model.getObjectid());
-    scontxt.setObjty(model.getObjectty());
-    scontxt.setContextid(model.getContextid());
-    scontxt.setContextty(model.getContextty());
+    scontxt.setObjid(model.getObjectId());
+    scontxt.setObjty(model.getObjectType());
+    scontxt.setContextid(model.getContextId());
+    scontxt.setContextty(model.getContextType());
+    scontxt.setContextattr(model.getContextAttribute());
     scontxt.setCrby(model.getUser());
     scontxt.setCron(new Date());
     return scRepository.save(scontxt);
@@ -128,24 +129,28 @@ public class RegisterLikeAction {
     return lkRepository.save(like);
   }
 
-  private LikeResponseModel constructResponse(LikeRequestModel model, SocialActivity activity) {
-    LikeResponseModel response = new LikeResponseModel(model.getObjectid(),model.getObjectty(),model.getContextid(),
-        model.getContextty(),activity.getId(),model.getContxtattr());
+  private RegisterLikeResponseModel constructResponse(RegisterLikeRequestModel model, SocialActivity activity) {
+    RegisterLikeResponseModel
+        response = new RegisterLikeResponseModel(model.getObjectId(),model.getObjectType(),model.getContextId(),
+        model.getContextType(),activity.getId(),model.getContextAttribute());
     //get likes
     response.setLikecount(lkRepository.countBySactvtyid(activity.getId()).intValue());
     return response;
   }
 
-  private Event constructEvent(LikeResponseModel response,String user) {
+  private Event constructEvent(RegisterLikeResponseModel response, String user) {
     LikeRegisteredEvent event = new LikeRegisteredEvent();
-    event.setObjectid(response.getObjectid());
-    event.setObjectty(response.getObjectty());
-    event.setContextid(response.getContextid());
-    event.setContextty(response.getContextty());
-    event.setContxtattr(response.getContxtattr());
+    event.setObjectid(response.getObjectId());
+    event.setObjectty(response.getObjectType());
+    event.setContextid(response.getContextId());
+    event.setContextty(response.getContextType());
+    event.setContxtattr(response.getContextAttribute());
     event.setUser(user);
     return event;
   }
 
+  private String getData (Event event) {
+    return new GsonBuilder().create().toJson(event);
+  }
 
 }

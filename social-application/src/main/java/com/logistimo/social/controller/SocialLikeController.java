@@ -1,10 +1,14 @@
 package com.logistimo.social.controller;
 
+import com.logistimo.social.action.GetCountForManyAction;
 import com.logistimo.social.action.GetLikeForActivityAction;
+import com.logistimo.social.action.GetLikerForActivityAction;
 import com.logistimo.social.action.RegisterLikeAction;
-import com.logistimo.social.core.model.ActivityLikeResponseModel;
-import com.logistimo.social.core.model.LikeRequestModel;
-import com.logistimo.social.core.model.LikeResponseModel;
+import com.logistimo.social.core.model.GetLikeResponseModel;
+import com.logistimo.social.core.model.LikeCountContainer;
+import com.logistimo.social.core.model.LikerResponseModel;
+import com.logistimo.social.core.model.RegisterLikeRequestModel;
+import com.logistimo.social.core.model.RegisterLikeResponseModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +27,7 @@ import javax.annotation.Resource;
  * Created by kumargaurav on 08/11/17.
  */
 @RestController
-@RequestMapping(path = "/like")
+@RequestMapping(path = "/likes")
 public class SocialLikeController {
 
   private static final Logger logger = LoggerFactory.getLogger(SocialLikeController.class);
@@ -32,34 +36,59 @@ public class SocialLikeController {
   RegisterLikeAction  createAction;
 
   @Resource
-  GetLikeForActivityAction getAction;
+  GetLikerForActivityAction getLikerAction;
+
+  @Resource
+  GetCountForManyAction getCountForManyAction;
+
+  @Resource
+  GetLikeForActivityAction getLikeAction;
+
 
   @RequestMapping(path = "", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody LikeResponseModel registerLike (@RequestBody LikeRequestModel likeRequestModel) {
+  public @ResponseBody
+  RegisterLikeResponseModel registerLike (@RequestBody RegisterLikeRequestModel likeRequestModel) {
 
     return createAction.invoke(likeRequestModel);
   }
 
-  @RequestMapping(path = "/{obj_ty}/{obj_id}/{contxt_id}/{contxt_ty}", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody
-  ActivityLikeResponseModel getLikes (@PathVariable(name = "obj_id") String objid,
-                                      @PathVariable(name = "obj_ty") String objty,
-                                      @PathVariable(name = "contxt_id") String contxtid,
-                                      @PathVariable(name = "contxt_ty") String contxtty,
-                                      @RequestParam(name = "offset", required = false, defaultValue = "0") Integer offset,
-                                      @RequestParam(name = "size", required = false, defaultValue = "50") Integer size) {
-
-    return null;
-  }
-
   @RequestMapping(path = "", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody
-  ActivityLikeResponseModel getLikesForActivity (@RequestParam(name = "activity") String activityid,
-                                                 @RequestParam(name = "offset", required = false, defaultValue = "0") Integer offset,
-                                                 @RequestParam(name = "size", required = false, defaultValue = "50") Integer size) {
+  GetLikeResponseModel getLikes (@RequestParam(name = "obj_id") String objid,
+                                 @RequestParam(name = "obj_ty") String objty,
+                                 @RequestParam(name = "contxt_id",required = false) String contxtid,
+                                 @RequestParam(name = "offset", required = false, defaultValue = "0") Integer offset,
+                                 @RequestParam(name = "size", required = false, defaultValue = "50") Integer size) {
 
-    return getAction.invoke(activityid, offset, size);
+    return getLikeAction.invoke(objid,objty,contxtid,offset,size);
   }
 
+  @RequestMapping(path = "/{obj_ty}/{obj_id}/{contxt_id}/likers", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
+  public @ResponseBody
+  LikerResponseModel getLikers (@PathVariable(name = "obj_id") String objid,
+                                @PathVariable(name = "obj_ty") String objty,
+                                @PathVariable(name = "contxt_id") String contxtid,
+                                @RequestParam(name = "offset", required = false, defaultValue = "0") Integer offset,
+                                @RequestParam(name = "size", required = false, defaultValue = "50") Integer size) {
+
+    return getLikerAction.invoke(objid,objty,contxtid, offset, size);
+  }
+
+  @RequestMapping(path = "/{obj_ty}/{obj_id}/likers", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
+  public @ResponseBody
+  LikerResponseModel getLikers (@PathVariable(name = "obj_id") String objid,
+                                @PathVariable(name = "obj_ty") String objty,
+                                @RequestParam(name = "offset", required = false, defaultValue = "0") Integer offset,
+                                @RequestParam(name = "size", required = false, defaultValue = "50") Integer size) {
+
+    return getLikerAction.invoke(objid,objty,null, offset, size);
+  }
+
+  @RequestMapping(path = "/counts", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public @ResponseBody
+  LikeCountContainer getLikesCount (@RequestBody LikeCountContainer request) {
+
+    return getCountForManyAction.invoke(request);
+  }
 
 }

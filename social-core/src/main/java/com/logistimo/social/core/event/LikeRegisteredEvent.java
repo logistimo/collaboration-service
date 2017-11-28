@@ -28,7 +28,7 @@ public class LikeRegisteredEvent extends Event implements Serializable {
 
   private SocialType type;
 
-  private Map<String,String> contxtattr;
+  private String contxtattr;
 
   public LikeRegisteredEvent () {
     super("logistimo");
