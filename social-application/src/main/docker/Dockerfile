@@ -28,6 +28,6 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN chmod +x /docker-entrypoint.sh
 
-EXPOSE 9010 9099
+EXPOSE 9070 9099
 
 CMD ["/docker-entrypoint.sh"]

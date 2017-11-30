@@ -123,7 +123,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.11</version>
                 <configuration>
-                    <imageName>event-summarizer:${project.version}</imageName>
+                    <imageName>logistimo-social:${project.version}</imageName>
                     <dockerDirectory>src/main/docker</dockerDirectory>
                     <resources>
                         <resource>
