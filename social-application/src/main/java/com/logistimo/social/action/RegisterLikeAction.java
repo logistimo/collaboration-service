@@ -50,7 +50,7 @@ public class RegisterLikeAction {
   @Resource
   LikeRepository lkRepository;
 
-  @Produce(uri = "jms:events")
+  @Produce(uri = "jms:collab-events")
   ProducerTemplate producer;
 
 
