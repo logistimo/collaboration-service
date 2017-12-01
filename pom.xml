@@ -4,16 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.logistimo</groupId>
-	<artifactId>logistimo-social</artifactId>
+	<artifactId>collaboration-service</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
     <modules>
-		<module>social-core</module>
-		<module>social-application</module>
+		<module>collaboration-core</module>
+		<module>collaboration-application</module>
 	</modules>
     <packaging>pom</packaging>
 
-	<name>logistimo-social</name>
-	<description>Demo project for Spring Boot</description>
+	<name>collaboration-service</name>
+	<description>collaboration service</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
