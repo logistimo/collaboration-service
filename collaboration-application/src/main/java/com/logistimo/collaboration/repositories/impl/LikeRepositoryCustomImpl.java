@@ -5,6 +5,8 @@ import com.logistimo.collaboration.core.models.LikeModel;
 import com.logistimo.collaboration.core.models.PageParam;
 import com.logistimo.collaboration.repositories.LikeRepositoryCustom;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -26,12 +29,18 @@ import javax.persistence.Query;
 @Transactional(readOnly = true)
 public class LikeRepositoryCustomImpl implements LikeRepositoryCustom {
 
+  private static final Logger logger = LoggerFactory.getLogger(LikeRepositoryCustomImpl.class);
+
   @PersistenceContext
   EntityManager em;
 
   @Override
   public List<LikeCountModel> getLikesForMany(List<LikeCountModel> models,String user) {
 
+    if(models == null || models.size() < 1) {
+      logger.warn("Empty like count request payload");
+      return Collections.emptyList();
+    }
     String squery = "select sc.OBJID, sc.OBJTY, sc.CONTXTID, count(sl.id), sum (case when sl.liker in (:user) then 1 else 0 end) as liked"
         + " from SOCIALLIKE sl join SOCIALACTIVITY sa on (sa.id = sl.SACTVTYID) join SOCIALCONTEXT sc on (sc.id= sa.SCONTXTID) "
         + " where (sc.OBJID, sc.OBJTY, sc.CONTXTID) in (";
