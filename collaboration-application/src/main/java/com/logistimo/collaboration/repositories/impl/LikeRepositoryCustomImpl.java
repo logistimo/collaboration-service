@@ -41,7 +41,7 @@ public class LikeRepositoryCustomImpl implements LikeRepositoryCustom {
       logger.warn("Empty like count request payload");
       return Collections.emptyList();
     }
-    String squery = "select sc.OBJID, sc.OBJTY, sc.CONTXTID, count(sl.id), sum (case when sl.liker in (:user) then 1 else 0 end) as liked"
+    String squery = "select sc.OBJID, sc.OBJTY, sc.CONTXTID, count(sl.id), sum(case when sl.liker in (:user) then 1 else 0 end) as liked"
         + " from SOCIALLIKE sl join SOCIALACTIVITY sa on (sa.id = sl.SACTVTYID) join SOCIALCONTEXT sc on (sc.id= sa.SCONTXTID) "
         + " where (sc.OBJID, sc.OBJTY, sc.CONTXTID) in (";
     String groupbyQuery =") group by sa.id";
