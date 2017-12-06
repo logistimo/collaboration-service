@@ -57,10 +57,11 @@ public class CollaborationController {
   GetLikeResponseModel getLikes (@RequestParam(name = "object_id") String objid,
                                  @RequestParam(name = "object_type") String objty,
                                  @RequestParam(name = "context_id",required = false) String contxtid,
+                                 @RequestParam(name = "count",required = false, defaultValue = "false") boolean count,
                                  @RequestParam(name = "offset", required = false, defaultValue = "0") Integer offset,
                                  @RequestParam(name = "size", required = false, defaultValue = "50") Integer size) {
 
-    return getLikeAction.invoke(objid,objty,contxtid,offset,size);
+    return getLikeAction.invoke(objid,objty,contxtid,count,offset,size);
   }
 
   @RequestMapping(path = "/{object_type}/{object_id}/{context_id}/likers", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)

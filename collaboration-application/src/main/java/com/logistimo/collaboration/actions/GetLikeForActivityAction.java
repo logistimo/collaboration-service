@@ -23,23 +23,29 @@ public class GetLikeForActivityAction {
   LikeRepositoryCustom customRepository;
 
 
-  public GetLikeResponseModel invoke (String objectId, String objectType, String contextId, int offset, int size) {
+  public GetLikeResponseModel invoke (String objectId, String objectType, String contextId, boolean count, int offset, int size) {
 
     GetLikeResponseModel response = new GetLikeResponseModel();
     List<LikeModel> likes = null;
     int total = 0;
     if (StringUtils.isEmpty(contextId)) {
+      if (!count) {
       likes = customRepository
           .getLikesByObj(objectId, objectType, new PageParam(offset, size));
+      }
       total = customRepository.countLikesByObj(objectId, objectType).intValue();
     } else {
-      likes = customRepository
-          .getLikesByObjAndContxt(objectId, objectType, contextId, new PageParam(offset, size));
+      if (!count) {
+        likes = customRepository
+            .getLikesByObjAndContxt(objectId, objectType, contextId, new PageParam(offset, size));
+      }
       total = customRepository.countLikesByObjAndContxt(objectId, objectType, contextId).intValue();
     }
-    response.setLikes(likes);
-    response.offset = offset;
-    response.size = likes.size();
+    if (!count) {
+      response.setLikes(likes);
+      response.offset = offset;
+      response.size = likes.size();
+    }
     response.total = total;
     return response;
   }
