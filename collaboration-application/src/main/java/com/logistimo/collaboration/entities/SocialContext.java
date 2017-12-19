@@ -35,7 +35,7 @@ public class SocialContext implements Serializable {
   @Column(name = "CONTXTTY")
   private String contextty;
 
-  @Column(name = "CONTXTATTR")
+  @Column(name = "CONTXTATTR", length = 2048)
   private String contextattr;
 
   @Column(name = "CRBY")
