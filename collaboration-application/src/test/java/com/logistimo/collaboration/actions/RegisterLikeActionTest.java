@@ -1,19 +1,21 @@
 package com.logistimo.collaboration.actions;
 
 import com.logistimo.collaboration.core.models.RegisterLikeRequestModel;
-import com.logistimo.collaboration.repositories.LikeRepository;
-import com.logistimo.collaboration.repositories.SocialActivityRepository;
-import com.logistimo.collaboration.repositories.SocialContextRepository;
+import com.logistimo.collaboration.core.models.RegisterLikeResponseModel;
+import com.logistimo.collaboration.service.LIkePersistenceService;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
+import javax.validation.ValidationException;
 import javax.validation.Validator;
+
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by kumargaurav on 30/11/17.
@@ -24,37 +26,42 @@ public class RegisterLikeActionTest {
   Validator validator;
 
   @Mock
-  SocialContextRepository scRepository;
+  LIkePersistenceService persistenceService;
 
   @Mock
-  SocialActivityRepository saRepository;
-
-  @Mock
-  LikeRepository lkRepository;
-
-  @EndpointInject(uri="jms:collab-events")
-  MockEndpoint end;
-
-  @Produce(uri = "jms:collab-events")
   ProducerTemplate producer;
+
+  RegisterLikeAction action;
+
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    action = new RegisterLikeAction();
+    action.setValidator(validator);
+    action.setPersistenceService(persistenceService);
+    action.setProducer(producer);
+  }
 
   @Test
   public void testInvoke () {
-
-    RegisterLikeRequestModel re = createReqModel();
-    Mockito.when(validator.validate(re)).thenReturn(null);
+    when(persistenceService.persist(any())).thenReturn(createResModel());
+    assertNotNull(action.invoke(new RegisterLikeRequestModel()));
   }
 
-  private RegisterLikeRequestModel createReqModel () {
-
-
-    RegisterLikeRequestModel req = new RegisterLikeRequestModel();
-    req.setObjectId("1");
-    req.setObjectType("domain");
-    req.setContextId("1100694");
-    req.setContextType("event");
-    req.setSrc("MMA");
-    req.setUser("kumarg");
-    return req;
+  @Test(expected = ValidationException.class)
+  public void testValidationException () {
+    when(validator.validate(any())).thenThrow(new ValidationException());
+    action.invoke(new RegisterLikeRequestModel());
   }
+
+  private RegisterLikeResponseModel createResModel () {
+    RegisterLikeResponseModel res = new RegisterLikeResponseModel();
+    res.setObjectId("1");
+    res.setObjectType("domain");
+    res.setContextId("1100694");
+    res.setContextType("event");
+    res.setCounts(1);
+    return res;
+  }
+
 }

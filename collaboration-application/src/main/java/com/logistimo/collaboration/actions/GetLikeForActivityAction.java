@@ -5,12 +5,11 @@ import com.logistimo.collaboration.core.models.LikeModel;
 import com.logistimo.collaboration.core.models.PageParam;
 import com.logistimo.collaboration.repositories.LikeRepositoryCustom;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-
-import javax.annotation.Resource;
 
 /**
  * Created by kumargaurav on 21/11/17.
@@ -19,35 +18,50 @@ import javax.annotation.Resource;
 public class GetLikeForActivityAction {
 
 
-  @Resource
   LikeRepositoryCustom customRepository;
 
 
   public GetLikeResponseModel invoke (String objectId, String objectType, String contextId, boolean count, int offset, int size) {
 
     GetLikeResponseModel response = new GetLikeResponseModel();
-    List<LikeModel> likes = null;
-    int total = 0;
-    if (StringUtils.isEmpty(contextId)) {
-      if (!count) {
-      likes = customRepository
-          .getLikesByObj(objectId, objectType, new PageParam(offset, size));
-      }
-      total = customRepository.countLikesByObj(objectId, objectType).intValue();
-    } else {
-      if (!count) {
-        likes = customRepository
-            .getLikesByObjAndContxt(objectId, objectType, contextId, new PageParam(offset, size));
-      }
-      total = customRepository.countLikesByObjAndContxt(objectId, objectType, contextId).intValue();
-    }
-    if (!count) {
-      response.setLikes(likes);
-      response.offset = offset;
-      response.size = likes.size();
-    }
+    int total = getLikeCount(objectId,objectType,contextId).intValue();
     response.total = total;
+    if (count) {
+      return response;
+    }
+    List<LikeModel> likes = getLikes(objectId,objectType,contextId,offset, size);
+    response.setLikes(likes);
+    response.setSize(likes.size());
+    response.setOffset(offset);
     return response;
   }
 
+
+  private Long getLikeCount (String objectId, String objectType, String contextId) {
+    long total = 0;
+    if (StringUtils.isEmpty(contextId)) {
+      total = customRepository.countLikesByObj(objectId, objectType);
+    } else {
+      total = customRepository.countLikesByObjAndContxt(objectId, objectType, contextId);
+    }
+    return total;
+  }
+
+  private List<LikeModel> getLikes (String objectId, String objectType, String contextId, int offset, int size) {
+    List<LikeModel> likes = null;
+    if (StringUtils.isEmpty(contextId)) {
+      likes = customRepository
+          .getLikesByObj(objectId, objectType, new PageParam(offset, size));
+    } else {
+      likes = customRepository
+          .getLikesByObjAndContxt(objectId, objectType, contextId, new PageParam(offset, size));
+    }
+    return likes;
+  }
+
+  @Autowired
+  public void setCustomRepository(
+      LikeRepositoryCustom customRepository) {
+    this.customRepository = customRepository;
+  }
 }

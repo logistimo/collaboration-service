@@ -27,6 +27,9 @@ public class RegisterLikeResponseModel implements Serializable{
 
   private Integer counts;
 
+  public RegisterLikeResponseModel() {
+  }
+
   public RegisterLikeResponseModel(String objectId, String objectType, String contextId,
                                    String contextType, String activityId,
                                    String contextAttribute) {
