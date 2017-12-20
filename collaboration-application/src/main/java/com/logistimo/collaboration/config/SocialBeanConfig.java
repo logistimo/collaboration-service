@@ -24,7 +24,7 @@ public class SocialBeanConfig {
   public FilterRegistrationBean filter() {
     FilterRegistrationBean registration = new FilterRegistrationBean();
     registration.setFilter(new SocialFilter());
-    registration.addUrlPatterns("/**");
+    registration.addUrlPatterns("/*");
     return registration;
   }
 }
