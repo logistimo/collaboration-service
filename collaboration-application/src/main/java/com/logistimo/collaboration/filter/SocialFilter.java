@@ -11,6 +11,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by kumargaurav on 09/11/17.
@@ -28,7 +29,7 @@ public class SocialFilter implements Filter {
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                        FilterChain filterChain) throws IOException, ServletException {
 
-    logger.info("");
+    logger.info("Request for resource {}",((HttpServletRequest)servletRequest).getRequestURI());
   }
 
   @Override
