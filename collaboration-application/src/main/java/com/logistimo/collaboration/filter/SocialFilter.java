@@ -24,5 +24,6 @@ public class SocialFilter extends GenericFilterBean {
                        FilterChain filterChain) throws IOException, ServletException {
 
     log.info("Request for resource {}",((HttpServletRequest)servletRequest).getRequestURI());
+    filterChain.doFilter(servletRequest,servletResponse);
   }
 }
