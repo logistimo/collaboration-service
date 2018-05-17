@@ -11,4 +11,3 @@ Likes, comments and so on
 # Build instructions
 ```sh
 mvn clean install
-```sh
