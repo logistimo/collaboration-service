@@ -18,6 +18,9 @@ ENV JAVA_OPTS="-Xms512M -Xmx1G" \
 	MYSQL_SOCIAL_HOST=jdbc:mariadb://localhost:3306/social?useUnicode=true&amp;characterEncoding=UTF-8 \
     MYSQL_SOCIAL_USER=logistimo \
     MYSQL_SOCIAL_PASS=logistimo \
+    SERVICE_NAME=logi-callisto \
+    APM_SERVER_URL=localhost:8200 \
+    APM_AGENT_VER=0.6.0 \
 	JAVA_AGENT_PORT=9099
 
 RUN wget -P $HOME/ http://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.7/jmx_prometheus_javaagent-0.7.jar
