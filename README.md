@@ -22,16 +22,17 @@ export MAVEN_OPTS=-Xmx718m
 export MAVEN_HOME=/opt/apache-maven-3.5.3/
 export JAVA_HOME=/opt/java-home
 export PATH=$JAVA_HOME/bin:$PATH:$MAVEN_HOME/bin
-
+```
 2. Build the artifact
 
-```sh
+```
 mvn clean install
-
-```sh
+```
+```
 cd collaboration-application
-
+```
 3. Build the docker image
 
-```sh
+```
 mvn docker:build
+```
