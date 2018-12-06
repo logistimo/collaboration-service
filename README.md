@@ -8,7 +8,7 @@ Likes, comments and so on
 - Mariadb 10.1.22
 - Activemq 5.14.5 or higher
 - Redis 2.8.14 or higher
-
+- Docker
 
 Build Instructions
 ------------------
