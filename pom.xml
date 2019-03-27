@@ -6,6 +6,10 @@
 	<groupId>com.logistimo</groupId>
 	<artifactId>collaboration-service</artifactId>
 	<version>0.1.0</version>
+	<scm>
+      		<connection>scm:git:https://jenkins@github.com/logistimo/collaboration-service.git</connection>
+      		<developerConnection>scm:git:https://jenkins@github.com/logistimo/collaboration-service.git</developerConnection>
+    	</scm>
     <modules>
 		<module>collaboration-core</module>
 		<module>collaboration-application</module>
@@ -36,6 +40,36 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
 				</plugin>
+				<plugin>
+                			<groupId>org.apache.maven.plugins</groupId>
+                			<artifactId>maven-release-plugin</artifactId>
+                			<version>2.4.2</version>
+            			</plugin>
+            			<plugin>
+                			<groupId>org.apache.maven.plugins</groupId>
+	        			<artifactId>maven-scm-plugin</artifactId>
+	       				<version>1.11.2</version>
+	        			<configuration>
+		       				<providerImplementations>
+		               				<git>jgit</git>
+		       				</providerImplementations>
+	        			</configuration>
+	        			<dependencies>
+		       				<dependency>
+			       				<groupId>org.apache.maven.scm</groupId>
+			       				<artifactId>maven-scm-provider-jgit</artifactId>
+			       				<version>1.11.2</version>
+		       				</dependency>
+	        			</dependencies>
+	    			</plugin>
+				<plugin>
+                			<groupId>org.apache.maven.plugins</groupId>
+                			<artifactId>maven-compiler-plugin</artifactId>
+                			<configuration>
+                    				<source>1.8</source>
+                    				<target>1.8</target>
+                			</configuration>
+            			</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
