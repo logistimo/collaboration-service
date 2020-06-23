@@ -20,7 +20,7 @@ ENV JAVA_OPTS="-Xms512M -Xmx1G" \
     MYSQL_SOCIAL_PASS=logistimo \
 	JAVA_AGENT_PORT=9099
 
-RUN wget -P $HOME/ http://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.7/jmx_prometheus_javaagent-0.7.jar
+RUN wget -P $HOME/ https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.7/jmx_prometheus_javaagent-0.7.jar
 
 ADD jmx_exporter.json $HOME/
 
